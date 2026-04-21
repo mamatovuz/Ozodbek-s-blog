@@ -61,6 +61,27 @@ const writePosts = async (config, posts) => {
   }
 };
 
+const parsePostsFromBody = (body) => {
+  if (Array.isArray(body)) {
+    return body;
+  }
+
+  if (Array.isArray(body?.posts)) {
+    return body.posts;
+  }
+
+  if (typeof body === "string") {
+    try {
+      const parsed = JSON.parse(body);
+      return Array.isArray(parsed) ? parsed : Array.isArray(parsed?.posts) ? parsed.posts : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  return null;
+};
+
 export default async function handler(request, response) {
   response.setHeader("Cache-Control", "no-store");
 
@@ -87,7 +108,7 @@ export default async function handler(request, response) {
     }
 
     if (request.method === "POST") {
-      const posts = Array.isArray(request.body?.posts) ? request.body.posts : null;
+      const posts = parsePostsFromBody(request.body);
 
       if (!posts) {
         json(response, 400, {
