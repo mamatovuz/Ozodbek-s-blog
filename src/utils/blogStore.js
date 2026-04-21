@@ -3,6 +3,7 @@ import profileImage from "../pages/home/img/rasimim.jpg";
 
 export const BLOG_STORAGE_KEY = "ozodcode-blog-posts";
 export const DASHBOARD_AUTH_KEY = "ozodcode-dashboard-auth";
+export const BLOG_API_ENDPOINT = "/api/posts";
 
 export const ADMIN_EMAIL = "mamatovo354@gmail.com";
 export const ADMIN_PASSWORD = "123@Ozod";
@@ -94,9 +95,7 @@ const buildLegacyHtml = (post) => {
 
   if (post.externalLink) {
     parts.push(
-      `<p><a href="${escapeHtml(
-        post.externalLink
-      )}" target="_blank" rel="noreferrer">Qo'shilgan havolani ochish</a></p>`
+      `<p><strong>Havola:</strong> ${escapeHtml(post.externalLink)}</p>`
     );
   }
 
@@ -105,10 +104,12 @@ const buildLegacyHtml = (post) => {
 
 const normalizePost = (post) => ({
   ...post,
+  summary: post.summary || "",
   contentHtml: post.contentHtml || buildLegacyHtml(post),
 });
 
-const cloneDefaultPosts = () => defaultPosts.map((post) => normalizePost({ ...post }));
+export const cloneDefaultPosts = () =>
+  defaultPosts.map((post) => normalizePost({ ...post }));
 
 export const createSlug = (value) =>
   value
@@ -154,6 +155,70 @@ export const savePosts = (posts) => {
 
   const normalizedPosts = sortPosts(posts).map(normalizePost);
   window.localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(normalizedPosts));
+};
+
+export const fetchPosts = async () => {
+  if (typeof window === "undefined") {
+    return cloneDefaultPosts();
+  }
+
+  try {
+    const response = await fetch(BLOG_API_ENDPOINT, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`API ${response.status}`);
+    }
+
+    const data = await response.json();
+    const remotePosts = Array.isArray(data?.posts) ? data.posts : [];
+
+    if (!remotePosts.length) {
+      return getStoredPosts();
+    }
+
+    const normalizedPosts = sortPosts(remotePosts.map(normalizePost));
+    window.localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(normalizedPosts));
+    return normalizedPosts;
+  } catch (error) {
+    return getStoredPosts();
+  }
+};
+
+export const syncPosts = async (posts) => {
+  const normalizedPosts = sortPosts(posts).map(normalizePost);
+  savePosts(normalizedPosts);
+
+  if (typeof window === "undefined") {
+    return normalizedPosts;
+  }
+
+  try {
+    const response = await fetch(BLOG_API_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ posts: normalizedPosts }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API ${response.status}`);
+    }
+
+    const data = await response.json();
+    const syncedPosts = Array.isArray(data?.posts) ? data.posts.map(normalizePost) : normalizedPosts;
+    savePosts(syncedPosts);
+    return sortPosts(syncedPosts);
+  } catch (error) {
+    return normalizedPosts;
+  }
 };
 
 export const isAuthenticated = () => {

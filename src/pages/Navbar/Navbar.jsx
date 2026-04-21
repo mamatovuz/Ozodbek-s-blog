@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './Navbar.css'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setIsOpen(false)
+  }, [location.pathname])
+
   return (
     <div>
       <nav>
@@ -12,14 +19,26 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/about">About me</Link>
-          <Link to="/blog">Blog</Link>
-          <Link to="/skills">Skills</Link>
-          <a href="https://t.me/OzodCode" target="_blank" rel="noreferrer">
+        <button
+          type="button"
+          className={`nav-toggle ${isOpen ? 'open' : ''}`}
+          aria-label="Menyuni ochish"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((current) => !current)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div className={`nav-links ${isOpen ? 'open' : ''}`}>
+          <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
+          <Link to="/about" onClick={() => setIsOpen(false)}>About me</Link>
+          <Link to="/blog" onClick={() => setIsOpen(false)}>Blog</Link>
+          <Link to="/skills" onClick={() => setIsOpen(false)}>Skills</Link>
+          <Link to="https://t.me/OzodFlow" target="_blank" rel="noreferrer">
             Channel
-          </a>
+          </Link>
         </div>
       </nav>
     </div>

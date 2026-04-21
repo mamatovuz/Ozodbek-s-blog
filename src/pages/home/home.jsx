@@ -3,28 +3,9 @@ import './home.css'
 import Navbar from '../Navbar/Navbar'
 import Footer from '../Footer/footer'
 import profile from './img/rasimim.jpg'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
- const YouTube = () => {
-  window.open('https://www.youtube.com/', '_blank')
- }
-const GitHub = () => {
-  window.open('https://www.github.com/mamatovuz', '_blank')
- }
- const LinkedIn = () => {
-  window.open('https://www.linkedin.com/in/ozodbek-mamatov', '_blank')
- }
- const Telegram = () => {
-  window.open('https://t.me/OzodCode', '_blank')
- }
- const About = () => {
- window.location.href = '/about'
- }
- const Blog = () => {
- window.location.href = '/blog'
- }
-
-
  	return (
     <>
     	<Navbar />
@@ -41,10 +22,18 @@ const GitHub = () => {
 						<h3>Frontend Dasturchin</h3>
 
 						<div className='icons'>
-							<i onClick={YouTube} className='fab fa-youtube'></i>
-							<i onClick={GitHub} className='fab fa-github'></i>
-							<i onClick={LinkedIn} className='fab fa-linkedin'></i>
-						<i onClick={Telegram} className="fa-brands fa-telegram"></i>
+							<Link to="https://www.youtube.com/@mamatov_ads" target="_blank" rel="noreferrer" aria-label="YouTube">
+								<i className='fab fa-youtube'></i>
+							</Link>
+							<Link to="https://www.github.com/mamatovuz" target="_blank" rel="noreferrer" aria-label="GitHub">
+								<i className='fab fa-github'></i>
+							</Link>
+							<Link to="https://www.linkedin.com/in/mamatovozodbek/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+								<i className='fab fa-linkedin'></i>
+							</Link>
+							<Link to="https://t.me/OzodCode" target="_blank" rel="noreferrer" aria-label="Telegram">
+								<i className="fa-brands fa-telegram"></i>
+							</Link>
 						</div>
 
 					
@@ -55,8 +44,8 @@ const GitHub = () => {
     	<p>Raqamli dunyoda raqamsiz narsalar haqida gaplashamiz</p>
 
 						<div className='buttons'>
-							<button onClick={Blog} className='btn primary'>Read Blog</button>
-							<button onClick={About} className='btn outline'>About Me</button>
+							<Link to="/blog" className='btn primary'>Read Blog</Link>
+							<Link to="/about" className='btn outline'>About Me</Link>
 						</div>
   </div>
 		

@@ -3,18 +3,18 @@ import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import {
   buildUniqueSlug,
+  fetchPosts,
   formatDisplayDate,
   getStoredPosts,
-  savePosts,
   setAuthenticated,
   sortPosts,
   stripHtml,
+  syncPosts,
 } from "../../utils/blogStore";
 
 const emptyForm = {
   title: "",
   slug: "",
-  summary: "",
   contentHtml: "<p>Yangi blog matnini shu yerga yozing.</p>",
 };
 
@@ -36,8 +36,31 @@ const Dashboard = () => {
   const [editingId, setEditingId] = useState(null);
   const [statusText, setStatusText] = useState("");
   const [toolbar, setToolbar] = useState(createToolbarState);
+  const [isSaving, setIsSaving] = useState(false);
 
   const sortedPosts = useMemo(() => sortPosts(posts), [posts]);
+  const editorWordCount = useMemo(() => {
+    const cleanText = stripHtml(formData.contentHtml);
+    return cleanText ? cleanText.split(/\s+/).length : 0;
+  }, [formData.contentHtml]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPosts = async () => {
+      const nextPosts = await fetchPosts();
+
+      if (isMounted) {
+        setPosts(nextPosts);
+      }
+    };
+
+    loadPosts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!editorRef.current) {
@@ -211,13 +234,11 @@ const Dashboard = () => {
     setToolbar(createToolbarState());
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const cleanTitle = formData.title.trim();
     const cleanHtml = formData.contentHtml.trim();
-    const cleanSummary =
-      formData.summary.trim() || stripHtml(cleanHtml).slice(0, 180);
 
     if (!cleanTitle || !stripHtml(cleanHtml)) {
       setStatusText("Title va blog matni to'ldirilishi kerak.");
@@ -236,7 +257,7 @@ const Dashboard = () => {
       id: editingId || `post-${Date.now()}`,
       slug: nextSlug,
       title: cleanTitle,
-      summary: cleanSummary,
+      summary: "",
       contentHtml: cleanHtml,
       date: existingPost?.date || new Date().toISOString().slice(0, 10),
     };
@@ -245,10 +266,16 @@ const Dashboard = () => {
       ? posts.map((post) => (post.id === editingId ? nextPost : post))
       : [nextPost, ...posts];
 
-    setPosts(sortPosts(updatedPosts));
-    savePosts(updatedPosts);
+    setIsSaving(true);
+    const syncedPosts = await syncPosts(updatedPosts);
+    setPosts(sortPosts(syncedPosts));
+    setIsSaving(false);
     resetForm();
-    setStatusText(editingId ? "Blog yangilandi." : "Yangi blog qo'shildi.");
+    setStatusText(
+      editingId
+        ? "Blog yangilandi. Cloud storage ulangan bo'lsa hammaga ko'rinadi."
+        : "Yangi blog saqlandi. Cloud storage ulangan bo'lsa hammaga ko'rinadi."
+    );
   };
 
   const handleEdit = (post) => {
@@ -256,17 +283,18 @@ const Dashboard = () => {
     setFormData({
       title: post.title,
       slug: post.slug,
-      summary: post.summary || "",
       contentHtml: post.contentHtml,
     });
     setStatusText("Tahrirlash rejimi yoqildi.");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDelete = (postId) => {
+  const handleDelete = async (postId) => {
     const updatedPosts = posts.filter((post) => post.id !== postId);
-    setPosts(sortPosts(updatedPosts));
-    savePosts(updatedPosts);
+    setIsSaving(true);
+    const syncedPosts = await syncPosts(updatedPosts);
+    setPosts(sortPosts(syncedPosts));
+    setIsSaving(false);
 
     if (editingId === postId) {
       resetForm();
@@ -340,9 +368,15 @@ const Dashboard = () => {
     <main className="dashboard-page">
       <section className="dashboard-shell">
         <header className="dashboard-header">
-          <div>
+          <div className="dashboard-header-copy">
+            <span className="dashboard-kicker">Content Studio</span>
             <h1>Dashboard</h1>
-            <p>Blog yozish, rasm joylash va postlarni tartib bilan boshqarish joyi.</p>
+            <p>Blog yozish, tartiblash va e'lon qilish uchun bir joyga yig'ilgan boshqaruv paneli.</p>
+          </div>
+
+          <div className="dashboard-sync-pill">
+            <strong>{sortedPosts.length}</strong>
+            <span>ta post</span>
           </div>
 
           <div className="dashboard-header-actions">
@@ -362,16 +396,29 @@ const Dashboard = () => {
               <p>Matnni belgilang, keyin toolbar orqali bold, link va rang bering.</p>
             </div>
 
-            <div className="dashboard-editor-actions">
-              <button type="button" className="dashboard-toolbar-button" onClick={handleSelectImage}>
-                Rasm qo'shish
-              </button>
-              <button type="button" className="dashboard-toolbar-button" onClick={() => applyCommand("formatBlock", "<h2>")}>
-                Sarlavha
-              </button>
-              <button type="button" className="dashboard-toolbar-button" onClick={() => applyCommand("removeFormat")}>
-                Tozalash
-              </button>
+            <div className="dashboard-editor-side">
+              <div className="dashboard-editor-stats">
+                <div>
+                  <strong>{editorWordCount}</strong>
+                  <span>So'z</span>
+                </div>
+                <div>
+                  <strong>{editingId ? "Edit" : "New"}</strong>
+                  <span>Holat</span>
+                </div>
+              </div>
+
+              <div className="dashboard-editor-actions">
+                <button type="button" className="dashboard-toolbar-button" onClick={handleSelectImage}>
+                  Rasm qo'shish
+                </button>
+                <button type="button" className="dashboard-toolbar-button" onClick={() => applyCommand("formatBlock", "<h2>")}>
+                  Sarlavha
+                </button>
+                <button type="button" className="dashboard-toolbar-button" onClick={() => applyCommand("removeFormat")}>
+                  Tozalash
+                </button>
+              </div>
             </div>
           </div>
 
@@ -400,17 +447,6 @@ const Dashboard = () => {
                 />
               </label>
             </div>
-
-            <label>
-              Qisqa izoh
-              <textarea
-                name="summary"
-                value={formData.summary}
-                onChange={handleMetaChange}
-                rows="3"
-                placeholder="Blog ro'yxatida ko'rinadigan qisqa matn"
-              />
-            </label>
 
             <div className="dashboard-editor-wrap" onContextMenu={handleContextMenu}>
               {toolbar.visible ? (
@@ -462,7 +498,7 @@ const Dashboard = () => {
 
             <div className="dashboard-submit-row">
               <button type="submit" className="dashboard-save-button">
-                {editingId ? "Yangilash" : "Blogni saqlash"}
+                {isSaving ? "Saqlanmoqda..." : editingId ? "Yangilash" : "Blogni saqlash"}
               </button>
               <button type="button" className="dashboard-reset-button" onClick={resetForm}>
                 Tozalash
@@ -473,30 +509,43 @@ const Dashboard = () => {
 
         <section className="dashboard-list-card">
           <div className="dashboard-list-header">
-            <h2>Mavjud bloglar</h2>
+            <div>
+              <h2>Mavjud bloglar</h2>
+              <p className="dashboard-list-copy">Oxirgi yozuvlar, slug va tezkor boshqaruvlar shu yerda.</p>
+            </div>
             <span>{sortedPosts.length} ta post</span>
           </div>
 
           <div className="dashboard-post-list">
-            {sortedPosts.map((post) => (
-              <article key={post.id} className="dashboard-post-row">
-                <div className="dashboard-post-row-copy">
-                  <span>{formatDisplayDate(post.date)}</span>
-                  <h3>{post.title}</h3>
-                  <p>{post.summary}</p>
-                  <code>/blog/{post.slug}</code>
-                </div>
+            {sortedPosts.length ? (
+              sortedPosts.map((post) => (
+                <article key={post.id} className="dashboard-post-row">
+                  <div className="dashboard-post-row-copy">
+                    <div className="dashboard-post-row-topline">
+                      <span>{formatDisplayDate(post.date)}</span>
+                      <small>Live</small>
+                    </div>
+                    <h3>{post.title}</h3>
+                    <p>{stripHtml(post.contentHtml).slice(0, 120) || "Post tayyor."}</p>
+                    <code>/blog/{post.slug}</code>
+                  </div>
 
-                <div className="dashboard-post-row-actions">
-                  <button type="button" className="dashboard-inline-button" onClick={() => handleEdit(post)}>
-                    Tahrirlash
-                  </button>
-                  <button type="button" className="dashboard-inline-button danger" onClick={() => handleDelete(post.id)}>
-                    O'chirish
-                  </button>
-                </div>
-              </article>
-            ))}
+                  <div className="dashboard-post-row-actions">
+                    <button type="button" className="dashboard-inline-button" onClick={() => handleEdit(post)}>
+                      Tahrirlash
+                    </button>
+                    <button type="button" className="dashboard-inline-button danger" onClick={() => handleDelete(post.id)}>
+                      O'chirish
+                    </button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <div className="dashboard-empty-state">
+                <strong>Hali post yo'q</strong>
+                <p>Birinchi blogni yuqoridagi editor orqali yozishni boshlang.</p>
+              </div>
+            )}
           </div>
         </section>
       </section>

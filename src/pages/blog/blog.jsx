@@ -4,6 +4,7 @@ import "./blog.css";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/footer";
 import {
+  fetchPosts,
   formatDisplayDate,
   getStoredPosts,
   groupPostsByYear,
@@ -45,9 +46,9 @@ const BlogListView = ({ posts }) => {
           <h3>Obuna Bo'ling</h3>
           <p>
             Yangi maqola, maruza va darslarimni{" "}
-            <a href="https://t.me/OzodCode" target="_blank" rel="noreferrer">
+            <Link to="https://t.me/OzodCode" target="_blank" rel="noreferrer">
               @OzodCode
-            </a>{" "}
+            </Link>{" "}
             telegram kanalida topishingiz mumkin.
           </p>
         </aside>
@@ -64,8 +65,6 @@ const BlogDetailView = ({ post }) => {
         <span>{formatDisplayDate(post.date)}</span>
         <div className="blog-detail-line"></div>
       </header>
-
-      {post.summary ? <p className="blog-detail-summary">{post.summary}</p> : null}
 
       <div
         className="blog-rich-content"
@@ -88,7 +87,21 @@ const Blog = () => {
   const [posts, setPosts] = useState(() => getStoredPosts());
 
   useEffect(() => {
-    setPosts(getStoredPosts());
+    let isMounted = true;
+
+    const loadPosts = async () => {
+      const nextPosts = await fetchPosts();
+
+      if (isMounted) {
+        setPosts(nextPosts);
+      }
+    };
+
+    loadPosts();
+
+    return () => {
+      isMounted = false;
+    };
   }, [slug]);
 
   const sortedPosts = sortPosts(posts);
