@@ -47,13 +47,13 @@ const readPosts = async (config) => {
 };
 
 const writePosts = async (config, posts) => {
-  const response = await fetch(`${config.url}/set/${KV_KEY}`, {
+  const response = await fetch(config.url, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${config.token}`,
-      "Content-Type": "text/plain",
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(posts),
+    body: JSON.stringify(["SET", KV_KEY, JSON.stringify(posts)]),
   });
 
   if (!response.ok) {
