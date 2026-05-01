@@ -17,47 +17,9 @@ const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
 
 const defaultPosts = [
   {
-    id: "default-1",
-    slug: "frontendga-kirish-va-birinchi-portfolio",
-    title: "Frontendga kirish va birinchi portfolio",
-    summary:
-      "Birinchi marta portfolio ustida ishlaganimda dizayn, struktura va foydalanuvchi tajribasi qanday birlashishini tushunib bordim.",
-    highlight:
-      "Yaxshi portfolio faqat chiroyli ko'rinish emas, balki odamga siz kim ekaningizni 10 soniyada tushuntirib beradigan sahifa hamdir.",
-    content:
-      "Frontendni chuqurroq o'rganishni boshlaganimda eng birinchi katta vazifa portfolio yig'ish bo'ldi.\n\nHar bir section ustida ishlaganim sari matn, spacing va ranglar qanchalik muhim ekanini ko'rdim. Ayniqsa oddiy sahifani ham toza va ishonchli ko'rsatish uchun detallar katta rol o'ynadi.\n\nShu jarayon menga bir narsani o'rgatdi: foydalanuvchi avval hissiyot bilan baho beradi, keyin kontentni o'qiydi.",
-    image: featureImage,
-    externalLink: "https://t.me/OzodFlow",
-    date: "2026-04-15",
-  },
-  {
-    id: "default-2",
-    slug: "reactda-komponent-bilan-fikrlash",
-    title: "Reactda komponent bilan fikrlash",
-    summary:
-      "Bir sahifani bo'laklarga ajratib qurish nafaqat kodni tozalaydi, balki keyingi o'zgarishlarni ham ancha osonlashtiradi.",
-    highlight:
-      "Komponentlar ko'paygani yomon emas, tartibsiz komponentlar ko'paygani yomon.",
-    content:
-      "React bilan ishlaganda har bir blokni alohida komponent sifatida ko'rish odatga aylanishi kerak.\n\nNavbar, hero, blog list, footer - bular alohida bo'lsa, sahifani kengaytirish ancha soddalashadi. Bugun kerak bo'lmagan ajratish ertaga vaqtni tejaydi.\n\nAgar komponent o'z vazifasini aniq bajarsa, styling va logikani boshqarish ham yengillashadi.",
-    image: profileImage,
-    externalLink: "",
-    date: "2026-04-10",
-  },
-  {
-    id: "default-3",
-    slug: "amaliyot-bilan-osadigan-dasturchi",
-    title: "Amaliyot bilan o'sadigan dasturchi",
-    summary:
-      "Dars ko'rish foydali, lekin haqiqiy o'sish amaliy loyiha ustida qo'l tekkizilganda boshlanadi.",
-    highlight:
-      "Har bir tugallangan kichik loyiha keyingi katta loyihaning tayyorgarligi bo'ladi.",
-    content:
-      "Ko'p odamlar qayerdan boshlashni o'ylab uzoq turib qoladi. Menimcha eng yaxshi yo'l - kichik bo'lsa ham biror narsa qurib ko'rish.\n\nShunda xatolar tezroq ko'rinadi, savollar tabiiy tug'iladi va o'rganish ham ancha mazmunli bo'ladi. Aynan shu sababli blog, dashboard va portfolio kabi amaliy ishlarga ko'proq vaqt berish foydali.\n\nKod yozish davomida yig'ilgan tajriba video yoki maqoladan olingan bilimni mustahkamlaydi.",
-    image: featureImage,
-    externalLink: "",
-    date: "2026-03-28",
-  },
+    
+  }
+   
 ];
 
 const escapeHtml = (value = "") =>
