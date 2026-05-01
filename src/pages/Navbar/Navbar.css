@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap');
 
 nav {
-  width: min(1180px, calc(100% - 48px));
+ width: 80%;
   margin: 0 auto;
   padding: 26px 0 18px;
   display: flex;

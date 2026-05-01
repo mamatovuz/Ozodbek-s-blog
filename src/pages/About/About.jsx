@@ -5,61 +5,45 @@ import Footer from '../Footer/footer'
 import Rasimim from '../home/img/rasimim.jpg'
 
 const About = () => {
-  let yosh = new Date().getFullYear() - 2010
+	return (
+		<>
+			<Navbar />
+			<div className='About-page'>
+				<div className='title'>
+					<h1>Men haqimda</h1>
+					<hr />
+				</div>
 
-  return (
-    <>
-      <Navbar />
+				<div className='aboutp'>
+					<p>
+						Salom, mening ismim <b>Ozodbek</b>. Men <b>Andijon</b>likman va hozirda dasturlashni chuqur o‘rganib kelmoqdaman. 
+						<b> Frontend</b> yo‘nalishini tugatib, hozir <b>Backend</b> tomon qadam qo‘yyapman.
+					</p>
 
-      <section className="about">
-        <h1>Men haqimda</h1>
-        <div className="line"></div>
+					<img src={Rasimim} alt="Ozodbek rasmi" />
 
-        <div className="about-container">
-          
-          
-          <div className="about-text">
-            <p>
-              Salom, mening ismim <b>Ozodbek</b>. Yoshim <b>{yosh}</b> da.
-              Men frontend dasturchiman va hozir backendni o‘rganayapman.
-            </p>
+					<p>
+						Hozirgi kunda ko‘pchilik <b>AI sabab dasturchilarga ish qolmaydi</b> degan gaplarni aytmoqda. 
+						Lekin men bu fikrga boshqacha qarayman. Shuning uchun blogimning asosiy g‘oyasi:
+						<b> "Raqamli dunyoda raqamsiz narsalar haqida gaplashamiz"</b>.
+					</p>
 
-            <p>
-              Yaqinda <b>Frontend sertifikat</b> olaman. Keyinchalik
-              backendni ham mukammal o‘rganib, <b>FullStack developer</b> bo‘lishni maqsad qilganman.
-            </p>
+					<p>
+						Oddiy qilib aytganda, hamma texnologiya haqida gapirayotgan paytda, biz insoniylik, fikrlash, 
+						odatlar va hayotiy qarashlar haqida ham suhbatlashamiz. Bu — biroz boshqacha yondashuv.
+					</p>
 
-            <p>
-              Men kod yozish va trading bilan shug‘ullanaman.
-              Qiziqishlarim: <b>Trading, kripto, NFT</b>.
-            </p>
+					<p>
+						Ochig‘ini aytsam, ko‘pchilik meni <b>"dangasa"</b> deb o‘ylaydi. Chunki ba’zida ishlarni 
+						keyinga qoldirgan paytlarim bo‘lgan. Lekin men o‘z ustimda ishlashni davom ettiryapman 
+						va har kuni oz bo‘lsa ham oldinga harakat qilaman.
+					</p>
+				</div>
+			</div>
 
-            <div className="skills-box">
-              <h3>Texnik ko‘nikmalar</h3>
-              <ul>
-                <li>HTML / CSS / JavaScript</li>
-                <li>React.js / Tailwind</li>
-                <li>Node.js (o‘rganilmoqda)</li>
-                <li>API va Database bilan ishlash</li>
-              </ul>
-            </div>
-
-            <p className="goal">
-              🎯 Maqsadim — kuchli FullStack developer bo‘lish va katta loyihalarda ishlash.
-            </p>
-          </div>
-
-         
-          <div className="about-img">
-            <img src={Rasimim} alt="Ozodbek" />
-          </div>
-
-        </div>
-      </section>
-
-      <Footer />
-    </>
-  )
+			<Footer />
+		</>
+	)
 }
 
 export default About

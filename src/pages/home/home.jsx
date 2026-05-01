@@ -31,7 +31,7 @@ const Home = () => {
 							<Link to="https://www.linkedin.com/in/mamatovozodbek/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
 								<i className='fab fa-linkedin'></i>
 							</Link>
-							<Link to="https://t.me/OzodCode" target="_blank" rel="noreferrer" aria-label="Telegram">
+							<Link to="https://t.me/Mamatov_ads" target="_blank" rel="noreferrer" aria-label="Telegram">
 								<i className="fa-brands fa-telegram"></i>
 							</Link>
 						</div>

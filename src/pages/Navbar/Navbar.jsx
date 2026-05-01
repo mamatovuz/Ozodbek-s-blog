@@ -32,8 +32,7 @@ const Navbar = () => {
         </button>
 
         <div className={`nav-links ${isOpen ? 'open' : ''}`}>
-          <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/about" onClick={() => setIsOpen(false)}>About me</Link>
+          
           <Link to="/blog" onClick={() => setIsOpen(false)}>Blog</Link>
           <Link to="/skills" onClick={() => setIsOpen(false)}>Skills</Link>
           <Link to="https://t.me/OzodFlow" target="_blank" rel="noreferrer">

@@ -27,7 +27,7 @@ const defaultPosts = [
     content:
       "Frontendni chuqurroq o'rganishni boshlaganimda eng birinchi katta vazifa portfolio yig'ish bo'ldi.\n\nHar bir section ustida ishlaganim sari matn, spacing va ranglar qanchalik muhim ekanini ko'rdim. Ayniqsa oddiy sahifani ham toza va ishonchli ko'rsatish uchun detallar katta rol o'ynadi.\n\nShu jarayon menga bir narsani o'rgatdi: foydalanuvchi avval hissiyot bilan baho beradi, keyin kontentni o'qiydi.",
     image: featureImage,
-    externalLink: "https://t.me/OzodCode",
+    externalLink: "https://t.me/OzodFlow",
     date: "2026-04-15",
   },
   {

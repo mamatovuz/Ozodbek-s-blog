@@ -46,8 +46,8 @@ const BlogListView = ({ posts }) => {
           <h3>Obuna Bo'ling</h3>
           <p>
             Yangi maqola, maruza va darslarimni{" "}
-            <Link to="https://t.me/OzodCode" target="_blank" rel="noreferrer">
-              @OzodCode
+            <Link to="https://t.me/OzodFlow" target="_blank" rel="noreferrer">
+              @OzodFlow
             </Link>{" "}
             telegram kanalida topishingiz mumkin.
           </p>
